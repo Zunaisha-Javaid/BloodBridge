@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BloodBridge</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" asp-controller="Home" asp-action="Index">
+                🩸 BloodBridge
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Request" asp-action="Feed">
+                            <i class="bi bi-droplet-fill"></i> Request Feed
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Donor" asp-action="Search">
+                            <i class="bi bi-search-heart"></i> Find Donors
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="BloodTypeGuide">
+                            <i class="bi bi-info-circle"></i> Blood Guide
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav align-items-center">
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                        <!-- Notification Bell -->
+                        <li class="nav-item dropdown me-2">
+                            <a class="nav-link position-relative" href="#" id="notifDropdown"
+                               data-bs-toggle="dropdown" aria-expanded="false"
+                               onclick="markNotificationsRead()">
+                                <i class="bi bi-bell-fill fs-5"></i>
+                                <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark d-none">0</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" style="min-width:300px;" id="notifMenu">
+                                <li><h6 class="dropdown-header">Notifications</h6></li>
+                                <li><p class="text-center text-muted small py-2" id="notifEmpty">No new notifications</p></li>
+                            </ul>
+                        </li>
+
+                        @if (User.IsInRole("Donor"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Donor" asp-action="Dashboard">
+                                    <i class="bi bi-person-heart"></i> My Dashboard
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">
+                                    <i class="bi bi-speedometer2"></i> Admin
+                                </a>
+                            </li>
+                        }
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> @User.Identity.Name?.Split('@')[0]
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">
+                                    <i class="bi bi-person"></i> My Profile
+                                </a></li>
+                                @if (!User.IsInRole("Admin"))
+                                {
+                                    <li><a class="dropdown-item" asp-controller="Request" asp-action="MyRequests">
+                                        <i class="bi bi-list-ul"></i> My Requests
+                                    </a></li>
+                                }
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right"></i> Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-light btn-sm ms-2" asp-controller="Account" asp-action="Register">
+                                Register Free
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="py-4">
+        @if (TempData["Success"] != null)
+        {
+            <div class="container">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="container">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        }
+        @if (TempData["Info"] != null)
+        {
+            <div class="container">
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i>@TempData["Info"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        }
+        @RenderBody()
+    </main>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-1 fw-bold">🩸 BloodBridge — Connecting donors. Saving lives.</p>
+            <p class="text-muted small mb-0">Web Programming Semester Project &copy; @DateTime.Now.Year</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script>
+            // Poll notifications every 30 seconds
+            async function loadNotifications() {
+                try {
+                    const res = await fetch('/Home/GetNotifications');
+                    const data = await res.json();
+                    const badge = document.getElementById('notifBadge');
+                    const menu = document.getElementById('notifMenu');
+                    const empty = document.getElementById('notifEmpty');
+
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.classList.remove('d-none');
+                        empty && empty.remove();
+
+                        // Clear old items (keep header)
+                        const header = menu.querySelector('.dropdown-header').parentElement;
+                        menu.innerHTML = '';
+                        menu.appendChild(header);
+
+                        data.items.forEach(n => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<a class="dropdown-item small" href="${n.link || '#'}">
+                                <span>${n.message}</span>
+                                <br><small class="text-muted">${n.createdAt}</small>
+                            </a>`;
+                            menu.appendChild(li);
+                        });
+                    } else {
+                        badge.classList.add('d-none');
+                    }
+                } catch (e) {}
+            }
+
+            async function markNotificationsRead() {
+                await fetch('/Home/MarkNotificationsRead', { method: 'POST', headers: { 'RequestVerificationToken': document.querySelector('[name=__RequestVerificationToken]')?.value || '' } });
+                document.getElementById('notifBadge')?.classList.add('d-none');
+            }
+
+            loadNotifications();
+            setInterval(loadNotifications, 30000);
+        </script>
+    }
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

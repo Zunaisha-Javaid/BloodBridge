@@ -1,0 +1,84 @@
+@model BloodBridge.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container py-4">
+    <h3 class="fw-bold mb-4"><i class="bi bi-speedometer2 text-danger"></i> Admin Dashboard</h3>
+
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-2 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="display-6 fw-bold text-danger">@Model.TotalUsers</div>
+                <div class="text-muted small">Total Users</div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="display-6 fw-bold text-danger">@Model.TotalDonors</div>
+                <div class="text-muted small">Donors</div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="display-6 fw-bold text-danger">@Model.TotalRequests</div>
+                <div class="text-muted small">Total Requests</div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="display-6 fw-bold text-success">@Model.OpenRequests</div>
+                <div class="text-muted small">Open</div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="display-6 fw-bold text-secondary">@Model.FulfilledRequests</div>
+                <div class="text-muted small">Fulfilled</div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="display-6 fw-bold text-danger">@Model.MostNeededBloodType</div>
+                <div class="text-muted small">Most Needed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row g-3">
+        <div class="col-md-3">
+            <a asp-action="Users" class="card text-decoration-none shadow-sm border-0 h-100">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-people-fill text-danger" style="font-size:2.5rem;"></i>
+                    <div class="fw-bold mt-2">Manage Users</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="Requests" class="card text-decoration-none shadow-sm border-0 h-100">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-droplet-fill text-danger" style="font-size:2.5rem;"></i>
+                    <div class="fw-bold mt-2">Manage Requests</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="ExportDonors" class="card text-decoration-none shadow-sm border-0 h-100">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-file-earmark-spreadsheet text-danger" style="font-size:2.5rem;"></i>
+                    <div class="fw-bold mt-2">Export Donors CSV</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="ExportRequests" class="card text-decoration-none shadow-sm border-0 h-100">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-file-earmark-arrow-down text-danger" style="font-size:2.5rem;"></i>
+                    <div class="fw-bold mt-2">Export Requests CSV</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

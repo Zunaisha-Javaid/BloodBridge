@@ -1,0 +1,54 @@
+@model List<BloodBridge.Models.DonationHistory>
+@{
+    ViewData["Title"] = "Donation History";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold mb-0"><i class="bi bi-clock-history text-danger"></i> Donation History</h3>
+        <a asp-action="LogDonation" class="btn btn-danger btn-sm">
+            <i class="bi bi-plus-circle"></i> Log New
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-droplet text-muted" style="font-size:4rem;"></i>
+            <p class="text-muted mt-3">No donations logged yet. Start your journey!</p>
+            <a asp-action="LogDonation" class="btn btn-danger">Log First Donation</a>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-danger">
+                        <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Hospital</th>
+                            <th>Units</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int i = 1; }
+                        @foreach (var h in Model)
+                        {
+                            <tr>
+                                <td class="text-muted">@i++</td>
+                                <td><strong>@h.DonationDate.ToString("dd MMM yyyy")</strong></td>
+                                <td>@h.HospitalName</td>
+                                <td><span class="badge bg-danger">@h.Units unit(s)</span></td>
+                                <td class="text-muted small">@(h.Notes ?? "-")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <p class="text-muted small mt-2">Total: <strong>@Model.Count</strong> donation(s) — <strong>@Model.Sum(h => h.Units)</strong> unit(s) donated.</p>
+    }
+</div>

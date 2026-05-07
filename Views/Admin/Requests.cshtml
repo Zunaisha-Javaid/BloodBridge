@@ -1,0 +1,84 @@
+@model List<BloodBridge.Models.BloodRequest>
+@{
+    ViewData["Title"] = "Manage Requests";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold mb-0"><i class="bi bi-droplet-fill text-danger"></i> Manage Requests</h3>
+        <a asp-action="Dashboard" class="btn btn-outline-secondary btn-sm">← Back</a>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body py-2">
+            <form method="get" class="d-flex gap-2">
+                <select name="status" class="form-select form-select-sm w-auto">
+                    <option value="">All Statuses</option>
+                    <option value="Open" selected="@(ViewBag.Status == "Open")">Open</option>
+                    <option value="InProgress" selected="@(ViewBag.Status == "InProgress")">InProgress</option>
+                    <option value="Fulfilled" selected="@(ViewBag.Status == "Fulfilled")">Fulfilled</option>
+                    <option value="Expired" selected="@(ViewBag.Status == "Expired")">Expired</option>
+                </select>
+                <button type="submit" class="btn btn-outline-danger btn-sm px-4">Filter</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-danger">
+                    <tr>
+                        <th>#</th>
+                        <th>Blood Type</th>
+                        <th>Hospital / City</th>
+                        <th>Posted By</th>
+                        <th>Status</th>
+                        <th>Urgent</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var req in Model)
+                    {
+                        <tr>
+                            <td>@req.Id</td>
+                            <td><span class="badge bg-danger">@req.BloodType</span></td>
+                            <td>
+                                <div class="fw-semibold small">@req.HospitalName</div>
+                                <div class="text-muted small">@req.City</div>
+                            </td>
+                            <td class="small">@req.Requester.FullName</td>
+                            <td>
+                                @if (req.Status == BloodBridge.Models.RequestStatus.Open)
+                                {
+                                    <span class="badge bg-success">Open</span>
+                                }
+                                else if (req.Status == BloodBridge.Models.RequestStatus.Fulfilled)
+                                {
+                                    <span class="badge bg-secondary">Fulfilled</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@req.Status</span>
+                                }
+                            </td>
+                            <td>@(req.IsUrgent ? "🚨" : "-")</td>
+                            <td class="text-muted small">@req.CreatedAt.ToString("dd MMM")</td>
+                            <td>
+                                <form asp-action="DeleteRequest" method="post"
+                                      onsubmit="return confirm('Remove this request?')">
+                                    <input type="hidden" name="requestId" value="@req.Id" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

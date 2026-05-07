@@ -1,0 +1,85 @@
+@model BloodBridge.ViewModels.BloodRequestViewModel
+@{
+    ViewData["Title"] = "Post Blood Request";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-danger text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-plus-circle"></i> Post a Blood Request</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger small"></div>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label asp-for="BloodType" class="form-label fw-semibold"></label>
+                                <select asp-for="BloodType" class="form-select">
+                                    <option value="">-- Select --</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                                <span asp-validation-for="BloodType" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Quantity" class="form-label fw-semibold">Units Needed</label>
+                                <input asp-for="Quantity" type="number" class="form-control" min="1" max="50" />
+                                <span asp-validation-for="Quantity" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Deadline" class="form-label fw-semibold"></label>
+                                <input asp-for="Deadline" type="date" class="form-control"
+                                       min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="Deadline" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 mt-3">
+                            <label asp-for="HospitalName" class="form-label fw-semibold"></label>
+                            <input asp-for="HospitalName" class="form-control" placeholder="e.g. Aga Khan Hospital" />
+                            <span asp-validation-for="HospitalName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="City" class="form-label fw-semibold"></label>
+                            <input asp-for="City" class="form-control" placeholder="e.g. Karachi" />
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="AdditionalInfo" class="form-label fw-semibold"></label>
+                            <textarea asp-for="AdditionalInfo" class="form-control" rows="3"
+                                      placeholder="Any additional details about the patient or urgency..."></textarea>
+                        </div>
+
+                        <div class="mb-4 p-3 bg-danger bg-opacity-10 rounded">
+                            <div class="form-check form-switch">
+                                <input asp-for="IsUrgent" class="form-check-input" role="switch" />
+                                <label asp-for="IsUrgent" class="form-check-label fw-bold text-danger">
+                                    🚨 Mark as URGENT — This will alert donors immediately
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger w-100 fw-bold py-2">
+                            <i class="bi bi-send-fill"></i> Post Request & Notify Donors
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

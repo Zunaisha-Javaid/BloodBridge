@@ -1,0 +1,133 @@
+@model BloodBridge.Models.BloodRequest
+@{
+    ViewData["Title"] = "Request Details";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header py-3 @(Model.IsUrgent ? "bg-danger text-white" : "bg-light")">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">
+                            @if (Model.IsUrgent) { <span>🚨 URGENT — </span> }
+                            Blood Request #@Model.Id
+                        </h5>
+                        <span class="badge @(Model.Status == BloodBridge.Models.RequestStatus.Open ? "bg-success" :
+                                              Model.Status == BloodBridge.Models.RequestStatus.Fulfilled ? "bg-secondary" : "bg-warning text-dark") fs-6">
+                            @Model.Status
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-3 text-center">
+                            <div class="bg-danger text-white rounded-3 py-3 px-2 mb-2">
+                                <div style="font-size:2.5rem;font-weight:bold;">@Model.BloodType</div>
+                                <div class="small">needed</div>
+                            </div>
+                            <div class="text-muted small">@Model.Quantity unit(s)</div>
+                        </div>
+                        <div class="col-md-9">
+                            <table class="table table-borderless mb-0">
+                                <tr>
+                                    <td class="fw-semibold text-muted" style="width:130px;">Hospital</td>
+                                    <td>@Model.HospitalName</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-muted">City</td>
+                                    <td>@Model.City</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-muted">Deadline</td>
+                                    <td class="@(Model.Deadline < DateTime.Now ? "text-danger fw-bold" : "")">
+                                        @Model.Deadline.ToString("dd MMMM yyyy")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-muted">Posted by</td>
+                                    <td>@Model.Requester.FullName &mdash; <a href="tel:@Model.Requester.Phone">@Model.Requester.Phone</a></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-muted">Posted on</td>
+                                    <td>@Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.AdditionalInfo))
+                    {
+                        <div class="alert alert-light border mt-3">
+                            <strong>Additional Info:</strong> @Model.AdditionalInfo
+                        </div>
+                    }
+
+                    <!-- Respond Button -->
+                    @if (User.Identity!.IsAuthenticated && Model.Status == BloodBridge.Models.RequestStatus.Open || Model.Status == BloodBridge.Models.RequestStatus.InProgress)
+                    {
+                        <hr />
+                        @if (User.IsInRole("Donor"))
+                        {
+                            <form asp-action="Respond" method="post">
+                                <input type="hidden" name="requestId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold">
+                                    <i class="bi bi-heart-fill"></i> I Can Help — Respond to this Request
+                                </button>
+                            </form>
+                        }
+                        @if (User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.RequesterId)
+                        {
+                            <form asp-action="Fulfill" method="post" class="mt-2">
+                                <input type="hidden" name="requestId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-outline-success w-100"
+                                        onclick="return confirm('Mark this request as fulfilled?')">
+                                    <i class="bi bi-check-circle"></i> Mark as Fulfilled
+                                </button>
+                            </form>
+                        }
+                    }
+                    else if (!User.Identity.IsAuthenticated)
+                    {
+                        <hr />
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-danger w-100">
+                            <i class="bi bi-lock"></i> Login to Respond
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <!-- Responses -->
+            @if (Model.Responses.Any())
+            {
+                <div class="card shadow-sm border-0 mt-3">
+                    <div class="card-header bg-light fw-bold">
+                        <i class="bi bi-people text-danger"></i> Donor Responses (@Model.Responses.Count)
+                    </div>
+                    <div class="card-body p-0">
+                        @foreach (var r in Model.Responses)
+                        {
+                            <div class="d-flex align-items-center p-3 border-bottom">
+                                <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                     style="width:40px;height:40px;font-size:1rem;flex-shrink:0;">
+                                    @r.DonorProfile.User.FullName[0]
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">@r.DonorProfile.User.FullName</div>
+                                    <div class="text-muted small">@r.DonorProfile.User.City &bull; @r.DonorProfile.BloodType</div>
+                                </div>
+                                @if (User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.RequesterId)
+                                {
+                                    <a href="tel:@r.DonorProfile.User.Phone" class="btn btn-outline-danger btn-sm me-2">
+                                        <i class="bi bi-telephone"></i> @r.DonorProfile.User.Phone
+                                    </a>
+                                }
+                                <small class="text-muted">@r.ResponseDate.ToString("dd MMM")</small>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

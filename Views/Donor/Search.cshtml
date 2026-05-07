@@ -1,0 +1,106 @@
+@model BloodBridge.ViewModels.DonorSearchViewModel
+@{
+    ViewData["Title"] = "Find Donors";
+}
+
+<div class="container py-4">
+    <h3 class="fw-bold mb-4"><i class="bi bi-search-heart text-danger"></i> Find Blood Donors</h3>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+            <form asp-action="Search" method="get">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Blood Type</label>
+                        <select name="BloodType" class="form-select">
+                            <option value="">All Types</option>
+                            <option value="A+" selected="@(Model.BloodType == "A+")">A+</option>
+                            <option value="A-" selected="@(Model.BloodType == "A-")">A-</option>
+                            <option value="B+" selected="@(Model.BloodType == "B+")">B+</option>
+                            <option value="B-" selected="@(Model.BloodType == "B-")">B-</option>
+                            <option value="AB+" selected="@(Model.BloodType == "AB+")">AB+</option>
+                            <option value="AB-" selected="@(Model.BloodType == "AB-")">AB-</option>
+                            <option value="O+" selected="@(Model.BloodType == "O+")">O+</option>
+                            <option value="O-" selected="@(Model.BloodType == "O-")">O-</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">City</label>
+                        <input name="City" class="form-control" value="@Model.City" placeholder="e.g. Karachi, Lahore" />
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check mt-3">
+                            <input name="OnlyAvailable" type="checkbox" class="form-check-input"
+                                   value="true" @(Model.OnlyAvailable ? "checked" : "") />
+                            <label class="form-check-label fw-semibold">Available Only</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.Results.Any())
+    {
+        <p class="text-muted small mb-3"><strong>@Model.Results.Count</strong> donor(s) found.</p>
+        <div class="row g-3">
+            @foreach (var d in Model.Results)
+            {
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-danger fs-5 px-3">@d.BloodType</span>
+                                @if (d.IsAvailable && d.IsEligible)
+                                {
+                                    <span class="badge bg-success small">Available</span>
+                                }
+                                else if (!d.IsAvailable)
+                                {
+                                    <span class="badge bg-secondary small">Unavailable</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark small">Not Yet Eligible</span>
+                                }
+                            </div>
+                            <h6 class="fw-bold mb-1">@d.FullName</h6>
+                            <p class="text-muted small mb-1"><i class="bi bi-geo-alt"></i> @d.City</p>
+                            <p class="text-muted small mb-2"><i class="bi bi-droplet"></i> @d.TotalDonations donation(s)</p>
+
+                            @if (User.Identity!.IsAuthenticated)
+                            {
+                                <div class="d-flex gap-2 mt-2">
+                                    <a href="tel:@d.Phone" class="btn btn-outline-danger btn-sm flex-fill">
+                                        <i class="bi bi-telephone"></i> @d.Phone
+                                    </a>
+                                    <a href="mailto:@d.Email" class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-envelope"></i>
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-danger btn-sm w-100 mt-2">
+                                    <i class="bi bi-lock"></i> Login to Contact
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(Model.BloodType) || !string.IsNullOrEmpty(Model.City))
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-search text-muted" style="font-size:3rem;"></i>
+            <p class="text-muted mt-3">No donors found matching your criteria. Try a different search.</p>
+        </div>
+    }
+</div>

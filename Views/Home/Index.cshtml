@@ -1,0 +1,128 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- Hero Section -->
+<section class="hero-section bg-danger text-white py-5">
+    <div class="container py-4 text-center">
+        <h1 class="display-4 fw-bold mb-3">🩸 Every Drop Counts</h1>
+        <p class="lead mb-4">BloodBridge connects blood donors with patients in need — fast, free, and life-saving.</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg fw-bold px-5">
+                <i class="bi bi-heart-fill text-danger"></i> Become a Donor
+            </a>
+            <a asp-controller="Request" asp-action="Create" class="btn btn-outline-light btn-lg px-5">
+                <i class="bi bi-plus-circle"></i> Post a Request
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Stats -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body py-4">
+                        <div class="display-5 fw-bold text-danger">@ViewBag.TotalDonors</div>
+                        <div class="text-muted mt-1"><i class="bi bi-people-fill"></i> Registered Donors</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body py-4">
+                        <div class="display-5 fw-bold text-danger">@ViewBag.TotalRequests</div>
+                        <div class="text-muted mt-1"><i class="bi bi-droplet-fill"></i> Total Requests</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body py-4">
+                        <div class="display-5 fw-bold text-danger">@ViewBag.FulfilledRequests</div>
+                        <div class="text-muted mt-1"><i class="bi bi-check-circle-fill"></i> Lives Helped</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Urgent Requests -->
+@if (ViewBag.UrgentRequests != null && ((List<BloodBridge.Models.BloodRequest>)ViewBag.UrgentRequests).Count > 0)
+{
+    <section class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold"><span class="text-danger">🚨</span> Urgent Requests</h2>
+                <a asp-controller="Request" asp-action="Feed" asp-route-urgentOnly="true" class="btn btn-outline-danger btn-sm">
+                    View All Urgent
+                </a>
+            </div>
+            <div class="row g-3">
+                @foreach (var req in (List<BloodBridge.Models.BloodRequest>)ViewBag.UrgentRequests)
+                {
+                    <div class="col-md-4">
+                        <div class="card border-danger h-100 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-danger fs-5 px-3">@req.BloodType</span>
+                                    <span class="badge bg-warning text-dark">URGENT</span>
+                                </div>
+                                <h6 class="card-title">@req.HospitalName</h6>
+                                <p class="text-muted small mb-2"><i class="bi bi-geo-alt"></i> @req.City</p>
+                                <p class="text-muted small mb-3">Deadline: @req.Deadline.ToString("dd MMM yyyy")</p>
+                                <a asp-controller="Request" asp-action="Details" asp-route-id="@req.Id"
+                                   class="btn btn-danger btn-sm w-100">
+                                    <i class="bi bi-heart-fill"></i> I Can Help
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<!-- How It Works -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">How It Works</h2>
+        <div class="row g-4 text-center">
+            <div class="col-md-3">
+                <div class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;font-size:1.5rem;">1</div>
+                <h5>Register</h5>
+                <p class="text-muted small">Sign up as a donor, patient, or hospital in under 2 minutes.</p>
+            </div>
+            <div class="col-md-3">
+                <div class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;font-size:1.5rem;">2</div>
+                <h5>Post or Search</h5>
+                <p class="text-muted small">Post urgent blood requests or search for available donors nearby.</p>
+            </div>
+            <div class="col-md-3">
+                <div class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;font-size:1.5rem;">3</div>
+                <h5>Get Notified</h5>
+                <p class="text-muted small">Matching donors are instantly notified by email and in-app alerts.</p>
+            </div>
+            <div class="col-md-3">
+                <div class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;font-size:1.5rem;">4</div>
+                <h5>Save a Life</h5>
+                <p class="text-muted small">Donor responds, they connect, and a life is saved. Simple as that.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 bg-danger text-white text-center">
+    <div class="container">
+        <h2 class="fw-bold mb-3">Ready to make a difference?</h2>
+        <p class="lead mb-4">Join thousands of donors across Pakistan saving lives every day.</p>
+        <a asp-controller="Donor" asp-action="Search" class="btn btn-light btn-lg fw-bold px-5">
+            <i class="bi bi-search-heart"></i> Find a Donor Now
+        </a>
+    </div>
+</section>

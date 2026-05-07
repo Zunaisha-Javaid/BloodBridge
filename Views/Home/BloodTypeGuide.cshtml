@@ -1,0 +1,99 @@
+@{
+    ViewData["Title"] = "Blood Type Compatibility Guide";
+}
+
+<div class="container py-5">
+    <h2 class="fw-bold text-center mb-2">🩸 Blood Type Compatibility Guide</h2>
+    <p class="text-center text-muted mb-5">Understanding which blood types can donate to and receive from whom.</p>
+
+    <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle shadow-sm">
+            <thead class="table-danger">
+                <tr>
+                    <th>Blood Type</th>
+                    <th>Can Donate To</th>
+                    <th>Can Receive From</th>
+                    <th>Special Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge bg-danger fs-5">A+</span></td>
+                    <td>A+, AB+</td>
+                    <td>A+, A-, O+, O-</td>
+                    <td class="text-muted small">Second most common type</td>
+                </tr>
+                <tr>
+                    <td><span class="badge bg-danger fs-5">A-</span></td>
+                    <td>A+, A-, AB+, AB-</td>
+                    <td>A-, O-</td>
+                    <td class="text-muted small">Can donate to all A and AB types</td>
+                </tr>
+                <tr>
+                    <td><span class="badge bg-danger fs-5">B+</span></td>
+                    <td>B+, AB+</td>
+                    <td>B+, B-, O+, O-</td>
+                    <td class="text-muted small">Common in South Asian populations</td>
+                </tr>
+                <tr>
+                    <td><span class="badge bg-danger fs-5">B-</span></td>
+                    <td>B+, B-, AB+, AB-</td>
+                    <td>B-, O-</td>
+                    <td class="text-muted small">Rare type — very valuable donors</td>
+                </tr>
+                <tr class="table-warning">
+                    <td><span class="badge bg-danger fs-5">AB+</span></td>
+                    <td>AB+ only</td>
+                    <td><strong>All blood types</strong></td>
+                    <td class="text-muted small">Universal recipient 🏆</td>
+                </tr>
+                <tr>
+                    <td><span class="badge bg-danger fs-5">AB-</span></td>
+                    <td>AB+, AB-</td>
+                    <td>AB-, A-, B-, O-</td>
+                    <td class="text-muted small">Rarest blood type</td>
+                </tr>
+                <tr class="table-success">
+                    <td><span class="badge bg-danger fs-5">O+</span></td>
+                    <td>A+, B+, AB+, O+</td>
+                    <td>O+, O-</td>
+                    <td class="text-muted small">Most common type</td>
+                </tr>
+                <tr class="table-info">
+                    <td><span class="badge bg-danger fs-5">O-</span></td>
+                    <td><strong>All blood types</strong></td>
+                    <td>O- only</td>
+                    <td class="text-muted small">Universal donor 🌟 — critical for emergencies</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row g-3 mt-4">
+        <div class="col-md-6">
+            <div class="card border-0 bg-danger bg-opacity-10 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold text-danger"><i class="bi bi-star-fill"></i> Universal Donor — O-</h5>
+                    <p class="mb-0">O- blood can be given to anyone in an emergency. Hospitals always need O- in stock. If you are O-, your donation is <strong>critically important</strong>.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 bg-warning bg-opacity-10 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold text-warning"><i class="bi bi-trophy-fill"></i> Universal Recipient — AB+</h5>
+                    <p class="mb-0">AB+ patients can receive blood from any donor. However, AB+ donors can only donate to other AB+ patients.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a asp-controller="Donor" asp-action="Search" class="btn btn-danger btn-lg me-3">
+            <i class="bi bi-search-heart"></i> Find a Donor
+        </a>
+        <a asp-controller="Request" asp-action="Create" class="btn btn-outline-danger btn-lg">
+            <i class="bi bi-plus-circle"></i> Post a Request
+        </a>
+    </div>
+</div>

@@ -1,0 +1,126 @@
+@model BloodBridge.Models.DonorProfile
+@{
+    ViewData["Title"] = "Donor Dashboard";
+    var user = ViewBag.User as BloodBridge.Models.ApplicationUser;
+}
+
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Profile Card -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width:80px;height:80px;font-size:2rem;">
+                        @user?.FullName[0].ToString().ToUpper()
+                    </div>
+                    <h4 class="fw-bold mb-1">@user?.FullName</h4>
+                    <p class="text-muted small mb-3">@user?.City</p>
+
+                    <span class="badge bg-danger fs-4 px-4 py-2 mb-3">@Model.BloodType</span>
+
+                    <div class="mb-3">
+                        @if (Model.IsAvailable)
+                        {
+                            <span class="badge bg-success px-3 py-2"><i class="bi bi-check-circle"></i> Available to Donate</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary px-3 py-2"><i class="bi bi-x-circle"></i> Unavailable</span>
+                        }
+                    </div>
+
+                    <form asp-action="ToggleAvailability" method="post">
+                        <button type="submit" class="btn @(Model.IsAvailable ? "btn-outline-secondary" : "btn-outline-success") btn-sm w-100">
+                            @(Model.IsAvailable ? "Mark as Unavailable" : "Mark as Available")
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="col-md-8">
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <div class="card border-0 shadow-sm text-center py-3">
+                        <div class="display-6 fw-bold text-danger">@Model.TotalDonations</div>
+                        <div class="text-muted small"><i class="bi bi-droplet-fill"></i> Total Donations</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card border-0 shadow-sm text-center py-3">
+                        @if (Model.IsEligibleToDonate)
+                        {
+                            <div class="display-6 fw-bold text-success"><i class="bi bi-check-circle-fill"></i></div>
+                            <div class="text-muted small">Eligible to Donate Now</div>
+                        }
+                        else
+                        {
+                            <div class="display-6 fw-bold text-warning"><i class="bi bi-clock-fill"></i></div>
+                            <div class="text-muted small">Eligible on @Model.EligibleAgainDate?.ToString("dd MMM yyyy")</div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Last Donation -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-2"><i class="bi bi-calendar-check text-danger"></i> Last Donation</h6>
+                    <p class="mb-0">
+                        @(Model.LastDonationDate.HasValue
+                            ? Model.LastDonationDate.Value.ToString("dd MMMM yyyy")
+                            : "No donations recorded yet.")
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="d-flex gap-2 flex-wrap">
+                <a asp-action="LogDonation" class="btn btn-danger">
+                    <i class="bi bi-plus-circle"></i> Log a Donation
+                </a>
+                <a asp-action="History" class="btn btn-outline-danger">
+                    <i class="bi bi-clock-history"></i> Donation History
+                </a>
+                <a asp-controller="Request" asp-action="Feed" class="btn btn-outline-secondary">
+                    <i class="bi bi-list-ul"></i> Browse Requests
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent History -->
+    @if (Model.DonationHistories.Any())
+    {
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-header bg-light fw-bold">
+                <i class="bi bi-clock-history text-danger"></i> Recent Donation History
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Hospital</th>
+                            <th>Units</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var h in Model.DonationHistories.OrderByDescending(d => d.DonationDate).Take(5))
+                        {
+                            <tr>
+                                <td>@h.DonationDate.ToString("dd MMM yyyy")</td>
+                                <td>@h.HospitalName</td>
+                                <td>@h.Units</td>
+                                <td class="text-muted small">@(h.Notes ?? "-")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
